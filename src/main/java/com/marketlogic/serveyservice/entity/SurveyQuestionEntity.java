@@ -17,7 +17,5 @@ public class SurveyQuestionEntity {
     @Column(name = "is_active")
     private Boolean isActive;
 
-   /* @Column(name = "options")
-    private List<String> options;*/
 
 }
