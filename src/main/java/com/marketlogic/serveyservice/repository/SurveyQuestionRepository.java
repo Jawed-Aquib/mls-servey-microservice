@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SurveyQuestionRepository extends CrudRepository<SurveyQuestionEntity, Integer> {
     List<SurveyQuestionEntity> findByIsActive(Boolean activeStatus);
+    SurveyQuestionEntity findByIdAndIsActive(Integer id, Boolean isActive);
 }
