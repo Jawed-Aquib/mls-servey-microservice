@@ -1,0 +1,29 @@
+{
+ "surveyName" : "first survey",
+  "surveyQuestionModels" : [
+    {
+      "question" : "Question 3",
+      "surveyAnswerModels": [
+        {
+          "value" : "option 5"
+        },
+        {
+          "value" : "option 6"
+        }
+      ]
+    },
+    {
+      "id" : 10001,
+      "question" : "Question 1",
+      "surveyAnswerModels": [
+        {
+          "value" : "val 1"
+        },
+        {
+          "value" : "val 2"
+        }
+      ]
+    }
+
+  ]
+}

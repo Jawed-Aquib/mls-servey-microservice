@@ -1,4 +1,4 @@
-package com.marketlogic.serveyservice;
+package com.marketlogic.surveyservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

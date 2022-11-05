@@ -1,14 +1,14 @@
-package com.marketlogic.serveyservice.service;
+package com.marketlogic.surveyservice.service;
 
 
-import com.marketlogic.serveyservice.entity.SurveyAnswerEntity;
-import com.marketlogic.serveyservice.entity.SurveyQuestionEntity;
-import com.marketlogic.serveyservice.model.SurveyAnswerModel;
-import com.marketlogic.serveyservice.model.SurveyQuestionModel;
-import com.marketlogic.serveyservice.model.SurveyQuestionStatusModel;
-import com.marketlogic.serveyservice.repository.SurveyAnswerRepository;
-import com.marketlogic.serveyservice.repository.SurveyQuestionRepository;
-import com.marketlogic.serveyservice.service.impl.SurveyServiceImpl;
+import com.marketlogic.surveyservice.entity.SurveyOptionEntity;
+import com.marketlogic.surveyservice.entity.SurveyQuestionEntity;
+import com.marketlogic.surveyservice.model.SurveyAnswerModel;
+import com.marketlogic.surveyservice.model.SurveyQuestionModel;
+import com.marketlogic.surveyservice.model.SurveyQuestionStatusModel;
+import com.marketlogic.surveyservice.repository.SurveyAnswerRepository;
+import com.marketlogic.surveyservice.repository.SurveyQuestionRepository;
+import com.marketlogic.surveyservice.service.impl.SurveyQuestionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,23 +17,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class ServeyServiceImplTest {
+public class ServeyQuestionServiceImplTest {
 
     @InjectMocks
-    SurveyServiceImpl surveyService;
+    SurveyQuestionServiceImpl surveyQuestionService;
 
     @Mock
     SurveyQuestionRepository surveyQuestionRepository;
 
     @Mock
     SurveyAnswerRepository surveyAnswerRepository;
+
+    @Mock
+    SurveyAnswerService surveyAnswerService;
 
     @Test
     public void testGetServeyQuestions(){
@@ -44,7 +46,7 @@ public class ServeyServiceImplTest {
                 getSurveyAnswerEntities(surveyQuestionEntity)
         );
 
-        List<SurveyQuestionModel> actualSurveyQuestionModelList = surveyService.getSurveyQuestion();
+        List<SurveyQuestionModel> actualSurveyQuestionModelList = surveyQuestionService.getSurveyQuestion();
 
         SurveyAnswerModel surveyAnswerModel1 =  SurveyAnswerModel.builder()
                 .id(1)
@@ -87,7 +89,7 @@ public class ServeyServiceImplTest {
         when(surveyAnswerRepository.findBySurveyQuestionEntity(any())).thenReturn(
                 getSurveyAnswerEntities(surveyQuestionEntity)
         );
-        List<SurveyQuestionModel> actualSurveyQuestionModels = surveyService.updateSurveyQuestions(surveyQuestionStatusModels);
+        List<SurveyQuestionModel> actualSurveyQuestionModels = surveyQuestionService.updateSurveyQuestions(surveyQuestionStatusModels);
 
         SurveyAnswerModel surveyAnswerModel1 =  SurveyAnswerModel.builder()
                 .id(1)
@@ -113,13 +115,32 @@ public class ServeyServiceImplTest {
             SurveyQuestionModel expectedSurveyQuestionModel = expectedQuestionsModelList.get(i);
             assertEquals(actualSurveyQuestionModel, expectedSurveyQuestionModel);
         }
-      /*  for(int i = 0;i < surveyQuestionModels.size();i++){
-            SurveyQuestionModel surveyQuestionModel = surveyQuestionModels.get(i);
-            System.out.println(surveyQuestionModel.getId() + " " + surveyQuestionModel.getQuestion());
-            for(SurveyAnswerModel answerModel : surveyQuestionModel.getSurveyAnswerModels()){
-                System.out.println(answerModel.getId() + " " + answerModel.getValue() + " " + answerModel.getIsSelected());
-            }
-        }*/
+    }
+
+    @Test
+    public void testCreateSurveyQuestionModel(){
+        SurveyAnswerModel answerModel1 = SurveyAnswerModel.builder()
+                .id(1)
+                .value("option 1")
+                .isSelected(Boolean.FALSE)
+                .build();
+        SurveyAnswerModel answerModel2 = SurveyAnswerModel.builder()
+                .id(2)
+                .value("option 2")
+                .isSelected(Boolean.FALSE)
+                .build();
+
+        SurveyQuestionModel expectedSurveyQuestionModel = SurveyQuestionModel.builder()
+                .id(1)
+                .question("question 1")
+                .surveyAnswerModels(Arrays.asList(answerModel1, answerModel2))
+                .build();
+        SurveyQuestionEntity surveyQuestionEntity = getSurveyQuestionEntityWithStatus(Boolean.TRUE);
+        when(surveyQuestionRepository.save(any())).thenReturn(surveyQuestionEntity);
+        when(surveyAnswerService.createSurveyAnswer(answerModel1, surveyQuestionEntity)).thenReturn(answerModel1);
+        when(surveyAnswerService.createSurveyAnswer(answerModel2, surveyQuestionEntity)).thenReturn(answerModel2);
+        SurveyQuestionModel actualSurveyQuestionModel = surveyQuestionService.createSurveyQuestionModel(expectedSurveyQuestionModel);
+        assertEquals(expectedSurveyQuestionModel, actualSurveyQuestionModel);
     }
 
     private SurveyQuestionEntity getSurveyQuestionEntityWithStatus(Boolean status){
@@ -129,20 +150,20 @@ public class ServeyServiceImplTest {
         surveyQuestionEntity.setIsActive(status);
         return surveyQuestionEntity;
     }
-    private  List<SurveyAnswerEntity> getSurveyAnswerEntities(SurveyQuestionEntity surveyQuestionEntity){
-        List<SurveyAnswerEntity> answerEntityList = new ArrayList<>();
-        SurveyAnswerEntity surveyAnswerEntity1 = new SurveyAnswerEntity();
-        surveyAnswerEntity1.setId(1);
-        surveyAnswerEntity1.setSurveyQuestionEntity(surveyQuestionEntity);
-        surveyAnswerEntity1.setValue("option 1");
+    private  List<SurveyOptionEntity> getSurveyAnswerEntities(SurveyQuestionEntity surveyQuestionEntity){
+        List<SurveyOptionEntity> answerEntityList = new ArrayList<>();
+        SurveyOptionEntity surveyOptionEntity1 = new SurveyOptionEntity();
+        surveyOptionEntity1.setId(1);
+        surveyOptionEntity1.setSurveyQuestionEntity(surveyQuestionEntity);
+        surveyOptionEntity1.setValue("option 1");
 
-        SurveyAnswerEntity surveyAnswerEntity2 = new SurveyAnswerEntity();
-        surveyAnswerEntity2.setId(2);
-        surveyAnswerEntity2.setSurveyQuestionEntity(surveyQuestionEntity);
-        surveyAnswerEntity2.setValue("option 2");
+        SurveyOptionEntity surveyOptionEntity2 = new SurveyOptionEntity();
+        surveyOptionEntity2.setId(2);
+        surveyOptionEntity2.setSurveyQuestionEntity(surveyQuestionEntity);
+        surveyOptionEntity2.setValue("option 2");
        // List<SurveyAnswerEntity> answerEntityList = new ArrayList<>();
-        answerEntityList.add(surveyAnswerEntity1);
-        answerEntityList.add(surveyAnswerEntity2);
+        answerEntityList.add(surveyOptionEntity1);
+        answerEntityList.add(surveyOptionEntity2);
         return answerEntityList;
     }
 
