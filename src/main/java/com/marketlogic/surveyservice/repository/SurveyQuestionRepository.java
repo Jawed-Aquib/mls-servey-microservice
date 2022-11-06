@@ -1,6 +1,6 @@
-package com.marketlogic.serveyservice.repository;
+package com.marketlogic.surveyservice.repository;
 
-import com.marketlogic.serveyservice.entity.SurveyQuestionEntity;
+import com.marketlogic.surveyservice.entity.SurveyQuestionEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

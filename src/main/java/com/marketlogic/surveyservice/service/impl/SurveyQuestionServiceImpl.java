@@ -1,12 +1,13 @@
-package com.marketlogic.serveyservice.service.impl;
+package com.marketlogic.surveyservice.service.impl;
 
-import com.marketlogic.serveyservice.entity.SurveyQuestionEntity;
-import com.marketlogic.serveyservice.model.SurveyAnswerModel;
-import com.marketlogic.serveyservice.model.SurveyQuestionModel;
-import com.marketlogic.serveyservice.model.SurveyQuestionStatusModel;
-import com.marketlogic.serveyservice.repository.SurveyAnswerRepository;
-import com.marketlogic.serveyservice.repository.SurveyQuestionRepository;
-import com.marketlogic.serveyservice.service.SurveyService;
+import com.marketlogic.surveyservice.entity.SurveyQuestionEntity;
+import com.marketlogic.surveyservice.model.SurveyAnswerModel;
+import com.marketlogic.surveyservice.model.SurveyQuestionModel;
+import com.marketlogic.surveyservice.model.SurveyQuestionStatusModel;
+import com.marketlogic.surveyservice.repository.SurveyAnswerRepository;
+import com.marketlogic.surveyservice.repository.SurveyQuestionRepository;
+import com.marketlogic.surveyservice.service.SurveyAnswerService;
+import com.marketlogic.surveyservice.service.SurveyQuestionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,14 @@ import java.util.Optional;
 
 @Component
 @Log4j2
-public class SurveyServiceImpl implements SurveyService {
+public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Autowired
     SurveyQuestionRepository surveyQuestionRepository;
     @Autowired
     SurveyAnswerRepository surveyAnswerRepository;
+    @Autowired
+    SurveyAnswerService surveyAnswerService;
 
     @Override
     public List<SurveyQuestionModel> getSurveyQuestion() {
@@ -67,6 +70,25 @@ public class SurveyServiceImpl implements SurveyService {
        }
         return surveyQuestionModels;
     }
+
+    @Override
+    public SurveyQuestionModel createSurveyQuestionModel(SurveyQuestionModel surveyQuestionModel) {
+        SurveyQuestionEntity surveyQuestionEntity = new SurveyQuestionEntity();
+        surveyQuestionEntity.setQuestion(surveyQuestionModel.getQuestion());
+        surveyQuestionEntity.setIsActive(Boolean.TRUE);
+        surveyQuestionEntity = surveyQuestionRepository.save(surveyQuestionEntity);
+        log.info("Survey question entity saved in db {}", surveyQuestionEntity.toString());
+        surveyQuestionModel.setId(surveyQuestionEntity.getId());
+        surveyQuestionModel.setQuestion(surveyQuestionEntity.getQuestion());
+        List<SurveyAnswerModel> surveyAnswerModels = new ArrayList<>();
+        for(SurveyAnswerModel surveyAnswerModel : surveyQuestionModel.getSurveyAnswerModels()){
+            log.info("Adding the answers into the db");
+            surveyAnswerModels.add(surveyAnswerService.createSurveyAnswer(surveyAnswerModel, surveyQuestionEntity));
+        }
+        surveyQuestionModel.setSurveyAnswerModels(surveyAnswerModels);
+        return surveyQuestionModel;
+    }
+
     private List<SurveyAnswerModel> getSurveyAnswerModelsByQuestions(SurveyQuestionEntity surveyQuestionEntity) {
         List<SurveyAnswerModel> surveyAnswerModelList = new ArrayList<>();
         surveyAnswerRepository.findBySurveyQuestionEntity(surveyQuestionEntity)

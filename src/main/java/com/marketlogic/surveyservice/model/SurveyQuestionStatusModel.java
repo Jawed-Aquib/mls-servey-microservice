@@ -1,4 +1,4 @@
-package com.marketlogic.serveyservice.model;
+package com.marketlogic.surveyservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
