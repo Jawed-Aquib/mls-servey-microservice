@@ -23,13 +23,15 @@ public class SurveyQuestionModel {
         if (o == null || getClass() != o.getClass()) return false;
         SurveyQuestionModel that = (SurveyQuestionModel) o;
         boolean surveyAnswerModelsCheck = true;
-        for(int i = 0; i < this.surveyAnswerModels.size();i++){
-            SurveyAnswerModel thisModel = this.surveyAnswerModels.get(0);
-            SurveyAnswerModel thatModel = that.surveyAnswerModels.get(0);
-            surveyAnswerModelsCheck = surveyAnswerModelsCheck
-                    && Objects.equals(thisModel.getId(), thatModel.getId())
-                    && Objects.equals(thisModel.getIsSelected(), thatModel.getIsSelected())
-                    && Objects.equals(thisModel.getValue(), thatModel.getValue());
+        if(null != this.surveyAnswerModels && null != that.surveyAnswerModels) {
+            for (int i = 0; i < this.surveyAnswerModels.size(); i++) {
+                SurveyAnswerModel thisModel = this.surveyAnswerModels.get(0);
+                SurveyAnswerModel thatModel = that.surveyAnswerModels.get(0);
+                surveyAnswerModelsCheck = surveyAnswerModelsCheck
+                        && Objects.equals(thisModel.getId(), thatModel.getId())
+                        && Objects.equals(thisModel.getIsSelected(), thatModel.getIsSelected())
+                        && Objects.equals(thisModel.getValue(), thatModel.getValue());
+            }
         }
         return Objects.equals(id, that.id) && Objects.equals(question, that.question) && surveyAnswerModelsCheck;
     }
