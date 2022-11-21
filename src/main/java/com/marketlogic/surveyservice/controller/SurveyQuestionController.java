@@ -31,7 +31,7 @@ public class SurveyQuestionController {
     }
 
     @PostMapping
-    public SurveyQuestionModel createSurveyQuestionModel(SurveyQuestionModel surveyQuestionModel){
+    public SurveyQuestionModel createSurveyQuestionModel(@RequestBody SurveyQuestionModel surveyQuestionModel){
 
         log.info("Creation a question with name {}", surveyQuestionModel.getQuestion());
         return surveyQuestionService.createSurveyQuestionModel(surveyQuestionModel);

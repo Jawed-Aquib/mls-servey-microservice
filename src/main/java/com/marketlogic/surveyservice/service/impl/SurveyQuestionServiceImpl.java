@@ -73,6 +73,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Override
     public SurveyQuestionModel createSurveyQuestionModel(SurveyQuestionModel surveyQuestionModel) {
+        log.info("SurveyQuestionModel for the creation is {}", surveyQuestionModel);
         SurveyQuestionEntity surveyQuestionEntity = new SurveyQuestionEntity();
         surveyQuestionEntity.setQuestion(surveyQuestionModel.getQuestion());
         surveyQuestionEntity.setIsActive(Boolean.TRUE);
